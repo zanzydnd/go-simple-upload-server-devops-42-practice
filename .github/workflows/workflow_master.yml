@@ -1,0 +1,55 @@
+name: "Master workflow"
+
+on:
+  push:
+    branches:
+      - 'master'
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - uses: actions/checkout@v2
+      - name: Build Docker Python Image
+        run: docker image build . --t dane4kq/go-simple-serv:latest
+
+      - name: Push Docker Python Image
+        run: docker image push dane4kq/go-simple-serv:latest
+
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: SetUp QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker buildx
+        uses: docker/setup-buildx-action@v1
+      
+      - name: Start Containers
+        run: docker-compose up --build -d
+      
+      - name: Make files
+        run: echo 'Hello, world!' > hello_world.txt \
+             echo 'Bye, world!' > bye_world.txt
+
+      - name: Upload files
+        run: curl -Ffile=@hello_world.txt 'http://localhost:8000/upload?token=f9403fc5f537b4ab332d' | grep -q '{"ok":true,"path":"/files/hello_world.txt"}' && echo 'passed' && \
+             curl -Ffile=@bye_world.txt 'http://localhost:8000/upload?token=f9403fc5f537b4ab332d' | grep -q '{"ok":true,"path":"/files/bye_world.txt"}' && echo 'passed'
+
+      - name: Is file uploaded
+        run: test -f media/hello_world.txt && \
+             test -f media/bye_world.txt  
+
+      - name: Pull Files
+        run: curl 'http://localhost:8000/files/hello_world.txt?token=f9403fc5f537b4ab332d' | grep -q 'Hello, world!' && echo 'matched' \ 
+             curl 'http://localhost:8000/files/bye_world.txt?token=f9403fc5f537b4ab332d' | grep -q 'Bye, world!' && echo 'matched'
+

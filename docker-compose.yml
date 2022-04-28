@@ -1,0 +1,43 @@
+version: "3.6"
+
+networks:
+  praktika:
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - 8000:80
+    restart: always
+    depends_on:
+      - uploader
+    volumes:
+      - ./media:/media
+    networks:
+      - praktika
+
+
+  uploader:
+    container_name: uploader_server
+    build:
+      context: .
+    command:
+      - -token
+      - f9403fc5f537b4ab332d
+      - -protected_method
+      - POST,PUT
+      - -upload_limit
+        # 768 MB
+      - "805306368"
+      - -port
+      - "8000"
+        # dir in docker to use for uploads/downloads
+      - /var/data
+    volumes:
+      - ./media:/var/data
+    expose:
+      - 80
+    networks:
+      - praktika
