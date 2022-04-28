@@ -22,7 +22,7 @@ jobs:
       - name: Push Docker Python Image
         run: docker image push dane4kq/go-simple-serv:latest
 
-
+ 
   test:
     needs: build
     runs-on: ubuntu-latest
