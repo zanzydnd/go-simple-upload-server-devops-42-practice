@@ -44,9 +44,11 @@ jobs:
         run: echo 'Hello, world!' > hello_world.txt \
              echo 'Bye, world!' > bye_world.txt
 
-      - name: Upload files
-        run: curl -Ffile=@hello_world.txt 'http://localhost:8000/upload?token=f9403fc5f537b4ab332d' | grep -q '{"ok":true,"path":"/files/hello_world.txt"}' && echo 'passed' && \
-             curl -Ffile=@bye_world.txt 'http://localhost:8000/upload?token=f9403fc5f537b4ab332d' | grep -q '{"ok":true,"path":"/files/bye_world.txt"}' && echo 'passed'
+      - name: Upload files 1
+        run: curl -Ffile=@hello_world.txt 'http://localhost:8000/upload?token=f9403fc5f537b4ab332d' | grep -q '{"ok":true,"path":"/files/hello_world.txt"}' && echo 'passed'
+
+      - name: Upload files 2
+        run: curl -Ffile=@bye_world.txt 'http://localhost:8000/upload?token=f9403fc5f537b4ab332d' | grep -q '{"ok":true,"path":"/files/bye_world.txt"}' && echo 'passed'
 
       - name: Is file uploaded
         run: test -f media/hello_world.txt && \
