@@ -7,20 +7,20 @@ on:
 
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-      - uses: actions/checkout@v2
-      - name: Build Docker Python Image
-        run: docker image build . -t dane4kq/go-simple-serv:latest
+  # build:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Login to DockerHub
+  #       uses: docker/login-action@v1
+  #       with:
+  #         username: ${{ secrets.DOCKER_HUB_USERNAME }}
+  #         password: ${{ secrets.DOCKER_HUB_TOKEN }}
+  #     - uses: actions/checkout@v2
+  #     - name: Build Docker Python Image
+  #       run: docker image build . -t dane4kq/go-simple-serv:latest
 
-      - name: Push Docker Python Image
-        run: docker image push dane4kq/go-simple-serv:latest
+  #     - name: Push Docker Python Image
+  #       run: docker image push dane4kq/go-simple-serv:latest
 
 
   test:
@@ -56,9 +56,26 @@ jobs:
       - name: Is file uploaded 2  
         run: test -f media/bye_world.txt      
 
-      - name: Pull Files
-        run: curl 'http://localhost:8000/files/hello_world.txt?token=f9403fc5f537b4ab332d' | grep -q 'Hello, world!' && echo 'matched' 
+      # - name: Pull Files
+      #   run: curl 'http://localhost:8000/files/hello_world.txt?token=f9403fc5f537b4ab332d' | grep -q 'Hello, world!' && echo 'matched' 
       
-      - name: Pull Files 2
-        run: curl 'http://localhost:8000/files/bye_world.txt?token=f9403fc5f537b4ab332d' | grep -q 'Bye, world!' && echo 'matched'
+      # - name: Pull Files 2
+      #   run: curl 'http://localhost:8000/files/bye_world.txt?token=f9403fc5f537b4ab332d' | grep -q 'Bye, world!' && echo 'matched'
+
+  deploy:
+    needs: test
+    runs-on: self-hosted
+    steps:
+      - name: Make pull
+        uses: actions/checkout@v2
+
+      - name: Stop containers
+        run: docker-compose stop
+
+      - name: Remove containers
+        run: docker-compose rm -f
+
+      - name: Start container
+        run: docker-compose up --build -d
+
 
