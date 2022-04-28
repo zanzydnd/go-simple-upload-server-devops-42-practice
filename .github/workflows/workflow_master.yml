@@ -7,20 +7,20 @@ on:
 
 
 jobs:
-  # build:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Login to DockerHub
-  #       uses: docker/login-action@v1
-  #       with:
-  #         username: ${{ secrets.DOCKER_HUB_USERNAME }}
-  #         password: ${{ secrets.DOCKER_HUB_TOKEN }}
-  #     - uses: actions/checkout@v2
-  #     - name: Build Docker Python Image
-  #       run: docker image build . -t dane4kq/go-simple-serv:latest
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - uses: actions/checkout@v2
+      - name: Build Docker Python Image
+        run: docker image build . -t dane4kq/go-simple-serv:latest
 
-  #     - name: Push Docker Python Image
-  #       run: docker image push dane4kq/go-simple-serv:latest
+      - name: Push Docker Python Image
+        run: docker image push dane4kq/go-simple-serv:latest
 
 
   test:
