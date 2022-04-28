@@ -17,7 +17,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - uses: actions/checkout@v2
       - name: Build Docker Python Image
-        run: docker image build . --t dane4kq/go-simple-serv:latest
+        run: docker image build . -t dane4kq/go-simple-serv:latest
 
       - name: Push Docker Python Image
         run: docker image push dane4kq/go-simple-serv:latest
