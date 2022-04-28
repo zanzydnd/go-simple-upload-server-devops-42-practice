@@ -27,6 +27,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: SetUp curl
+        run: apt-get update -y && apt-get upgrade -y && apt-get install -y curl 
+
       - uses: actions/checkout@v2
       - name: SetUp QEMU
         uses: docker/setup-qemu-action@v1
